@@ -1,6 +1,8 @@
+
+
 let countryInp = document.getElementById("country-inp");
 let searchBtn = document.getElementById("search-btn");
-console.log(searchBtn);
+
 
 let weather = {
     apiKey:"f2f9e74a2b7d5f26102bc588cc9ce27f",
@@ -64,15 +66,22 @@ let guide = {
 
 };
 
-
-// .catch(() => {
-//     if (countryName.length == 0) {
-//       result.innerHTML = `<h3>The input field cannot be empty</h3>`;
-//     } else {
-//       result.innerHTML = `<h3>Please enter a valid country name.</h3>`;
-//     }
-//   });
-// });
+mapboxgl.accessToken = 'pk.eyJ1IjoicHJpdGFtc2Fwa290YSIsImEiOiJjbGFiazVjamYwMTRsNDBtaWtxdGU2dnUxIn0.vD8yySjgQEd96lF6tSKQ6Q';
+const map = new mapboxgl.Map({
+container: 'map',
+// Choose from Mapbox's core styles, or make your own style with Mapbox Studio
+style: 'mapbox://styles/mapbox/streets-v11',
+center: [-79.4512, 43.6568],
+zoom: 3,
+});
+ 
+// Add the control to the map.
+map.addControl(
+new MapboxGeocoder({
+accessToken: mapboxgl.accessToken,
+mapboxgl: mapboxgl
+})
+);
 
 
 countryInp.addEventListener("keyup", (event) => {
@@ -81,7 +90,6 @@ countryInp.addEventListener("keyup", (event) => {
       weather.search();
     }
 });
-
 
 
 searchBtn.addEventListener('click', () => {
