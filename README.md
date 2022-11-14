@@ -14,3 +14,4 @@ Country InfoGraphic Application -
 - Uses Unsplash API to fetch the searched country related photo, provided  query paramter as country name
 
 
+Live Link: https://jovial-cajeta-687cb1.netlify.app/
