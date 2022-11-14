@@ -1,8 +1,5 @@
-
-
 let countryInp = document.getElementById("country-inp");
 let searchBtn = document.getElementById("search-btn");
-
 
 let weather = {
     apiKey:"f2f9e74a2b7d5f26102bc588cc9ce27f",
@@ -25,8 +22,10 @@ let weather = {
         document.querySelector(".temp").innerText = temp + "°C";
         document.querySelector(".humidity").innerText = "Humidity: " +  humidity + "%";
         document.querySelector(".wind").innerText = "Wind speed: " +  speed  + "km/h ";
-        document.querySelector(".module.two").classList.remove("loading");
-
+        document.querySelector(".temp-content").remove();
+        document.querySelector(".content").classList.remove("loading");
+        document.querySelector(".content-two").classList.remove("loading");
+        document.querySelector(".module").classList.remove("loading");
     },
 
     search: function() {
@@ -55,9 +54,6 @@ let guide = {
         document.querySelector(".population").innerText = "Population: " + population;
         document.querySelector(".languages").innerText = "Languages: " + languages;
         document.querySelector(".icon-one").src = img;
-        document.querySelector(".module").classList.remove("loading");
-
-
     },
 
     search: function() {
@@ -66,37 +62,92 @@ let guide = {
 
 };
 
+
+let country = {
+
+    fetchCountry: function(countryName) {
+        fetch("https://api.geocodify.com/v2/geocode?api_key=706e73502198f85efd519bd0a804e704d7e12081&q=" + countryName + "")
+        .then((response) => response.json())
+        .then((data) => this.displayCountry(data));
+    },
+   
+    displayCountry: function(data) {
+        const long = data.response.features[0].geometry.coordinates[0];
+        const lat = data.response.features[0].geometry.coordinates[1];
+        time.fetchTime(long, lat);
+        setupMap([long, lat]);    
+    },
+
+    search: function() {
+        this.fetchCountry(countryInp.value);
+    },
+};
+
+
+let time = {
+    fetchTime: function(long, lat) {
+        
+        fetch("http://api.timezonedb.com/v2.1/get-time-zone?key=T5LIT8XEAFHS&format=json&by=position&lat="+ lat +"&lng=" + long +"")
+        .then((response) => response.json())
+        .then((data) => this.displayTime(data));
+    },
+
+    displayTime: function(data) {
+        const time = data.formatted;
+        const timeZone = data.zoneName;
+        document.querySelector(".time").innerText = "Time: " + time;
+        document.querySelector(".timeZone").innerText = "Time Zone: " + timeZone;
+    },
+    
+}
+
+
+
+let locationPic = {
+    fetchLocation: function(countryName) {
+        fetch("https://api.unsplash.com/search/photos?client_id=m6xfShS-RTIdJiWrCku2jVbNr0iM42YtCmopz4VTtx8&query=" + countryName + "")
+        .then((response) => response.json())
+        .then((data) => this.displayLocation(data));
+    },
+   
+    displayLocation: function(data) {
+        const imgTwo = data.results[0].urls.regular;
+        document.querySelector(".location-pic").src = imgTwo;    
+    },
+
+    search: function() {
+        this.fetchLocation(countryInp.value);
+    },
+}
+
+
 mapboxgl.accessToken = 'pk.eyJ1IjoicHJpdGFtc2Fwa290YSIsImEiOiJjbGFiazVjamYwMTRsNDBtaWtxdGU2dnUxIn0.vD8yySjgQEd96lF6tSKQ6Q';
-const map = new mapboxgl.Map({
-container: 'map',
-// Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-style: 'mapbox://styles/mapbox/streets-v11',
-center: [-79.4512, 43.6568],
-zoom: 3,
-});
- 
-// Add the control to the map.
-map.addControl(
-new MapboxGeocoder({
-accessToken: mapboxgl.accessToken,
-mapboxgl: mapboxgl
-})
-);
+function setupMap(center) {
+    var map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/streets-v11',
+        center: center,
+        zoom: 2,
+    });
+    // Create a new marker.
+    const marker = new mapboxgl.Marker()
+    .setLngLat(center)
+    .addTo(map);
+}
 
-
+//Event Listeners 
 countryInp.addEventListener("keyup", (event) => {
     if(event.key == "Enter") {
       guide.search();
       weather.search();
+      country.search();
+      locationPic.search();
     }
 });
-
 
 searchBtn.addEventListener('click', () => {
     guide.search();
     weather.search();
+    country.search();
+    locationPic.search();
 });
-
-
-
-
