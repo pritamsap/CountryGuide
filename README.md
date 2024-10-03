@@ -1,4 +1,4 @@
-# CountryGuide
+# CountryGuide - Know the location, weather, timezone, & more.
 
 Country InfoGraphic Application -
 - Created a functional Country Guide Web app: Developed using HTML, CSS, & JavaScript 
